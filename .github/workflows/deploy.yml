@@ -1,0 +1,49 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ "main" ]   # adjust branch if needed
+
+jobs:
+  deploy:
+    runs-on: self-hosted   # or ubuntu-latest if not running runner on EC2
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1
+
+    - name: Login to Amazon ECR
+      run: |
+        aws ecr get-login-password --region ap-south-1 \
+        | sudo docker login --username AWS --password-stdin 661250075119.dkr.ecr.ap-south-1.amazonaws.com
+
+    - name: Build and push API image
+      run: |
+        sudo docker build -t mavarra-api -f Dockerfile.api .
+        sudo docker tag mavarra-api:latest 661250075119.dkr.ecr.ap-south-1.amazonaws.com/mavarra-api:latest
+        sudo docker push 661250075119.dkr.ecr.ap-south-1.amazonaws.com/mavarra-api:latest
+
+    - name: Build and push Web image
+      run: |
+        sudo docker build -t mavarra-web -f Dockerfile.web .
+        sudo docker tag mavarra-web:latest 661250075119.dkr.ecr.ap-south-1.amazonaws.com/mavarra-web:latest
+        sudo docker push 661250075119.dkr.ecr.ap-south-1.amazonaws.com/mavarra-web:latest
+
+    - name: Deploy on EC2
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd ~/mavarra
+          sudo docker-compose down
+          sudo docker-compose pull
+          sudo docker-compose up -d
