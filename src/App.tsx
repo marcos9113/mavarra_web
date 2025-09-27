@@ -99,7 +99,7 @@ function App() {
               </a>
               
               <a href="#about" className="group relative px-6 py-3 rounded-xl transition-all duration-300 hover:bg-mavarra-orange/10">
-                <span className="text-gray-300 group-hover:text-white font-medium text-sm tracking-wide">About</span>
+                <span className="text-gray-300 group-hover:text-white font-medium text-sm tracking-wide">Why Us?</span>
                 <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-mavarra-orange to-mavarra-pink group-hover:w-8 transition-all duration-300 rounded-full"></div>
               </a>
               
@@ -164,7 +164,7 @@ function App() {
             {/* Badge */}
             <div className="inline-flex items-center space-x-2 bg-mavarra-purple/10 border border-mavarra-purple/30 rounded-full px-6 py-3">
               <div className="w-3 h-3 bg-mavarra-emerald rounded-full animate-pulse"></div>
-              <span className="text-mavarra-purple font-semibold">Transforming Businesses Since 2024</span>
+              <span className="text-mavarra-purple font-semibold">Transforming Businesses Since 2025</span>
             </div>
 
             {/* Main Heading */}
@@ -194,8 +194,8 @@ function App() {
             {/* Stats Row */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto py-8">
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-mavarra-purple">100+</div>
-                <div className="text-gray-400">Businesses Transformed</div>
+                <div className="text-3xl md:text-4xl font-bold text-mavarra-purple">New</div>
+                <div className="text-gray-400">Startup Partner</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-mavarra-emerald">50%</div>
@@ -499,18 +499,18 @@ function App() {
               <h3 className="text-3xl font-bold bg-gradient-to-r from-mavarra-purple to-mavarra-pink bg-clip-text text-transparent mb-4">
                 Proven Results
               </h3>
-              <p className="text-gray-300">Numbers that speak for our excellence</p>
+            <p className="text-gray-300">Building trust through transparent collaboration</p>
             </div>
             
             <div className="grid md:grid-cols-4 gap-8">
               <div className="group bg-gradient-to-br from-black/40 via-gray-900/30 to-black/40 p-8 rounded-2xl border border-mavarra-purple/20 text-center hover:border-mavarra-purple/60 transition-all duration-500 hover:-translate-y-2">
                 <div className="w-16 h-16 bg-gradient-to-br from-mavarra-purple to-mavarra-indigo rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                   <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <path d="M3 3a1 1 0 011-1h12a1 1 0 011 1v14a1 1 0 01-1.447.894L10 15.118l-5.553 2.776A1 1 0 013 17V3z" />
                   </svg>
                 </div>
-                <div className="text-4xl font-bold text-mavarra-purple mb-2">100+</div>
-                <div className="text-gray-300 font-medium">Businesses Transformed</div>
+                <div className="text-4xl font-bold text-mavarra-purple mb-2">2025</div>
+                <div className="text-gray-300 font-medium">Founded To Build With You</div>
               </div>
               
               <div className="group bg-gradient-to-br from-black/40 via-gray-900/30 to-black/40 p-8 rounded-2xl border border-mavarra-emerald/20 text-center hover:border-mavarra-emerald/60 transition-all duration-500 hover:-translate-y-2">
@@ -601,7 +601,7 @@ function App() {
                     <div>
                       <h3 className="text-2xl font-bold text-mavarra-emerald mb-3">The Mission</h3>
                       <p>
-                        We founded Mavarra in 2024 with a clear mission: to <span className="text-mavarra-orange font-semibold">democratize technology</span> and make AI-powered digital solutions accessible to every business, regardless of size or budget. 
+We founded Mavarra in 2025 with a clear mission: to <span className="text-mavarra-orange font-semibold">democratize technology</span> and make AI-powered digital solutions accessible to every business, regardless of size or budget. 
                         We believed that innovation shouldn't be a privilege reserved for Fortune 500 companies.
                       </p>
                     </div>
@@ -748,7 +748,7 @@ function App() {
             </button>
           </div>
           <div className="mt-6 text-gray-500">
-            © 2024 Mavarra. All rights reserved.
+            © 2025 Mavarra. All rights reserved.
           </div>
         </div>
       </footer>
