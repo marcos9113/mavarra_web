@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted   # or ubuntu-latest if not running runner on EC2
+    runs-on: ubuntu-latest   
 
     steps:
     - name: Checkout repository
