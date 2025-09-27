@@ -2,50 +2,48 @@ name: Deploy to EC2
 
 on:
   push:
-    branches:
-      - main
-
-permissions:
-  id-token: write
-  contents: read
+    branches: [ "main" ]   # adjust branch if needed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
-          aws-region: ap-south-1
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1
 
-      - name: Fetch deploy SSH key from Secrets Manager
-        run: |
-          mkdir -p ~/.ssh
-          aws secretsmanager get-secret-value \
-            --secret-id mavarra/deploy_key \
-            --query SecretString \
-            --output text > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
+    - name: Login to Amazon ECR
+      run: |
+        aws ecr get-login-password --region ap-south-1 \
+        | docker login --username AWS --password-stdin 661250075119.dkr.ecr.ap-south-1.amazonaws.com
 
-      - name: Deploy to EC2 via SSH
-        env:
-          SSH_USER: ec2-user
-          SSH_HOST: ${{ secrets.EC2_PUBLIC_IP }}
-          REPO_DIR: /home/ec2-user/mavarra_main_web
-        run: |
-          ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" <<'EOSSH'
-            set -euo pipefail
-            cd "$REPO_DIR"
-            git fetch origin
-            git reset --hard origin/main
-            npm install
-            npm run build
-            pm2 restart all || pm2 start ecosystem.config.js
-            pm2 save
-          EOSSH
+    - name: Build and push API image
+      run: |
+        docker build -t mavarra-api -f Dockerfile.api .
+        docker tag mavarra-api:latest 661250075119.dkr.ecr.ap-south-1.amazonaws.com/mavarra-api:latest
+        docker push 661250075119.dkr.ecr.ap-south-1.amazonaws.com/mavarra-api:latest
+
+    - name: Build and push Web image
+      run: |
+        docker build -t mavarra-web -f Dockerfile.web .
+        docker tag mavarra-web:latest 661250075119.dkr.ecr.ap-south-1.amazonaws.com/mavarra-web:latest
+        docker push 661250075119.dkr.ecr.ap-south-1.amazonaws.com/mavarra-web:latest
+
+    - name: Deploy on EC2
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd ~/mavarra
+          sudo docker-compose down
+          sudo docker-compose pull
+          sudo docker-compose up -d
