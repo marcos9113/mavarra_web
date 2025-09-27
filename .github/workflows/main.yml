@@ -1,0 +1,51 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+          aws-region: ap-south-1
+
+      - name: Fetch deploy SSH key from Secrets Manager
+        run: |
+          mkdir -p ~/.ssh
+          aws secretsmanager get-secret-value \
+            --secret-id mavarra/deploy_key \
+            --query SecretString \
+            --output text > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Deploy to EC2 via SSH
+        env:
+          SSH_USER: ec2-user
+          SSH_HOST: ${{ secrets.EC2_PUBLIC_IP }}
+          REPO_DIR: /home/ec2-user/mavarra_main_web
+        run: |
+          ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" <<'EOSSH'
+            set -euo pipefail
+            cd "$REPO_DIR"
+            git fetch origin
+            git reset --hard origin/main
+            npm install
+            npm run build
+            pm2 restart all || pm2 start ecosystem.config.js
+            pm2 save
+          EOSSH
