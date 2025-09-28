@@ -10,6 +10,7 @@ import { getToken } from './utils/auth';
 
 function App() {
   const [route, setRoute] = React.useState<string>(window.location.hash || '#/');
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   React.useEffect(() => {
     const onHash = () => setRoute(window.location.hash || '#/');
     window.addEventListener('hashchange', onHash);
@@ -51,6 +52,20 @@ function App() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [route]);
+
+  React.useEffect(() => {
+    setIsMenuOpen(false);
+  }, [route]);
+
+  React.useEffect(() => {
+    const closeMenuOnResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', closeMenuOnResize);
+    return () => window.removeEventListener('resize', closeMenuOnResize);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dark-slate via-charcoal to-steel text-white relative overflow-hidden">
@@ -136,11 +151,76 @@ function App() {
 
               {/* Mobile Menu Button */}
               <div className="lg:hidden">
-                <button className="p-2 rounded-xl bg-mavarra-purple/10 text-mavarra-purple hover:bg-mavarra-purple hover:text-white transition-all duration-300">
+                <button
+                  type="button"
+                  onClick={() => setIsMenuOpen((prev) => !prev)}
+                  className="p-2 rounded-xl bg-mavarra-purple/10 text-mavarra-purple hover:bg-mavarra-purple hover:text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-mavarra-purple/50"
+                  aria-expanded={isMenuOpen}
+                  aria-controls="mobile-menu"
+                  aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
+              </div>
+            </div>
+          </div>
+          <div
+            id="mobile-menu"
+            className={`lg:hidden transition-all duration-300 ease-out overflow-hidden ${isMenuOpen ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}
+            aria-hidden={!isMenuOpen}
+          >
+            <div className="rounded-2xl border border-mavarra-purple/20 bg-dark-slate/90 shadow-xl shadow-mavarra-purple/10 backdrop-blur px-4 py-4 space-y-1">
+              <a
+                href="#home"
+                className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-200 hover:text-white hover:bg-mavarra-purple/10 transition-colors duration-200"
+              >
+                <span>Home</span>
+                <span className="text-xs uppercase tracking-wide text-mavarra-purple">Start</span>
+              </a>
+              <a
+                href="#services"
+                className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-200 hover:text-white hover:bg-mavarra-indigo/10 transition-colors duration-200"
+              >
+                <span>Services</span>
+                <span className="text-xs uppercase tracking-wide text-mavarra-indigo">What we do</span>
+              </a>
+              <a
+                href="#about"
+                className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-200 hover:text-white hover:bg-mavarra-orange/10 transition-colors duration-200"
+              >
+                <span>Why Us?</span>
+                <span className="text-xs uppercase tracking-wide text-mavarra-orange">Value</span>
+              </a>
+              <a
+                href="#story"
+                className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-200 hover:text-white hover:bg-mavarra-indigo/10 transition-colors duration-200"
+              >
+                <span>Our Story</span>
+                <span className="text-xs uppercase tracking-wide text-mavarra-purple">Journey</span>
+              </a>
+              <a
+                href="#/blog"
+                className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-200 hover:text-white hover:bg-mavarra-cyan/10 transition-colors duration-200"
+              >
+                <span>Blog</span>
+                <span className="text-xs uppercase tracking-wide text-mavarra-cyan">Insights</span>
+              </a>
+              <a
+                href="#contact"
+                className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-200 hover:text-white hover:bg-mavarra-pink/10 transition-colors duration-200"
+              >
+                <span>Contact</span>
+                <span className="text-xs uppercase tracking-wide text-mavarra-pink">Say hi</span>
+              </a>
+              <div className="pt-2">
+                <a
+                  href="#/start"
+                  className="block w-full text-center px-4 py-3 rounded-full font-semibold text-white bg-gradient-to-r from-mavarra-purple to-mavarra-indigo hover:from-mavarra-pink hover:to-mavarra-orange transition-colors duration-200"
+                >
+                  Get Started
+                </a>
               </div>
             </div>
           </div>
