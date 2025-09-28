@@ -43,13 +43,21 @@ function App() {
     if (!id) return;
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      try {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch {
+        el.scrollIntoView();
+      }
     }
   }, [route]);
 
   React.useEffect(() => {
     if (route.startsWith('#/')) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      try {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch {
+        window.scrollTo(0, 0);
+      }
     }
   }, [route]);
 
