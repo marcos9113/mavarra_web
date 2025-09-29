@@ -176,7 +176,8 @@ function App() {
           </div>
           <div
             id="mobile-menu"
-            className={`lg:hidden transition-all duration-300 ease-out overflow-hidden ${isMenuOpen ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}
+            data-testid="mobile-nav-panel"
+            className={`lg:hidden transition-all duration-300 ease-out overflow-hidden ${isMenuOpen ? 'max-h-screen opacity-100 mt-4' : 'max-h-0 opacity-0 pointer-events-none'}`}
             aria-hidden={!isMenuOpen}
           >
             <div className="rounded-2xl border border-mavarra-purple/20 bg-dark-slate/90 shadow-xl shadow-mavarra-purple/10 backdrop-blur px-4 py-4 space-y-1">
