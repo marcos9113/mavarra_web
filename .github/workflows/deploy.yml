@@ -1,12 +1,37 @@
-name: Deploy to EC2
+name: CI/CD Pipeline - Build, Test, Deploy
 
 on:
   push:
-    branches: [ "main" ]   # adjust branch if needed
+    branches: [ "main" ]   # change if your deploy branch is different
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest   
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run lint (if script exists)
+      run: npm run lint --if-present
+
+    - name: Run tests (if script exists)
+      run: npm test --if-present
+
+    - name: Run build
+      run: npm run build   # ✅ ensures app compiles before Dockerization
+
+  docker-deploy:
+    runs-on: ubuntu-latest
+    needs: build-test   # only runs if build-test succeeds
 
     steps:
     - name: Checkout repository
