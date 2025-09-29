@@ -2,10 +2,7 @@ version: "3.9"
 
 services:
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile.api
-    image: mavarra-api
+    image: 661250075119.dkr.ecr.ap-south-1.amazonaws.com/mavarra-api:latest
     environment:
       - NODE_ENV=production
       - PORT=3001
@@ -15,10 +12,7 @@ services:
       - "3001:3001"
 
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile.web
-    image: mavarra-web
+    image: 661250075119.dkr.ecr.ap-south-1.amazonaws.com/mavarra-web:latest
     ports:
       - "8080:80"
     depends_on:
