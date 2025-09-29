@@ -1,63 +1,12 @@
 import React from 'react';
 import { setToken, getToken, clearToken } from './utils/auth';
-import { randomBase32Secret, verifyTotp } from './utils/totp';
+import { verifyTotp } from './utils/totp';
 
 export default function Auth() {
   const [username, setUsername] = React.useState('');
   const [code, setCode] = React.useState('');
-  const [enroll, setEnroll] = React.useState<{otpauth?: string; qrUrl?: string; altQrUrl?: string; secret?: string; issuer?: string} | null>(null);
-  const [imgSrc, setImgSrc] = React.useState<string | undefined>(undefined);
   const [message, setMessage] = React.useState<string | null>(null);
   const token = getToken();
-
-  const onSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage(null);
-    setEnroll(null);
-    try {
-      const res = await fetch('/api/auth/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username }) });
-      const ct = res.headers.get('content-type') || '';
-      const text = await res.text();
-      if (ct.includes('application/json')) {
-        const data = JSON.parse(text);
-        if (!res.ok || !data?.success) throw new Error(data?.message || 'Failed to enroll');
-        const altQr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data.otpauth)}`;
-        setEnroll({ otpauth: data.otpauth, qrUrl: data.qrUrl, altQrUrl: altQr, secret: data.secret, issuer: data.issuer });
-        setImgSrc(data.qrUrl);
-        setMessage('Scan this QR code with Google Authenticator, then proceed to Login.');
-      } else {
-        // Local fallback
-        const issuer = 'Mavarra';
-        const secret = randomBase32Secret(20);
-        localStorage.setItem(`mavarra:auth:${username}:secret`, secret);
-        const label = encodeURIComponent(`${issuer}:${username}`);
-        const params = new URLSearchParams({ secret, issuer, algorithm: 'SHA1', digits: '6', period: '30' });
-        const otpauth = `otpauth://totp/${label}?${params.toString()}`;
-        const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(otpauth)}`;
-        const altQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(otpauth)}`;
-        setEnroll({ otpauth, qrUrl, altQrUrl, secret, issuer });
-        setImgSrc(qrUrl);
-        setMessage('Local demo mode: scan QR and proceed to Login.');
-      }
-    } catch (err: any) {
-      // Local fallback if network fails
-      try {
-        const issuer = 'Mavarra';
-        const secret = randomBase32Secret(20);
-        localStorage.setItem(`mavarra:auth:${username}:secret`, secret);
-        const label = encodeURIComponent(`${issuer}:${username}`);
-        const params = new URLSearchParams({ secret, issuer, algorithm: 'SHA1', digits: '6', period: '30' });
-        const otpauth = `otpauth://totp/${label}?${params.toString()}`;
-        const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(otpauth)}`;
-        const altQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(otpauth)}`;
-        setEnroll({ otpauth, qrUrl, altQrUrl, secret, issuer });
-        setImgSrc(qrUrl);
-        setMessage('Local demo mode: scan QR and proceed to Login.');
-      } catch {
-        setMessage(err?.message || 'Enrollment failed');
-      }
-    }
-  };
 
   const onLogin = async (e: React.FormEvent) => {
     e.preventDefault();
